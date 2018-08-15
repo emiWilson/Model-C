@@ -54,6 +54,15 @@ double Laplacian_U(int i,int j){
 	return laplacian_u;
 }
 
+double timeMarchC_phi(int i, int j){
+	double newPHI;
+	
+	newPHI = phi(i,j) + (dt_bar / pow(A(i,j), 2)) * (
+			(1 / dx_bar) * ( JR(i,j) - JL(i,j) + JT(i,j) - JB(i,j) )
+			- g_Prime(i,j) - lambda_bar * const_U * P_prime(i,j) );
+			
+	return newPHI;
+}
 
 double timeMarchC_U(int i, int j){
 
@@ -66,17 +75,6 @@ double timeMarchC_U(int i, int j){
 	return newU;
 }
 
-double timeMarchC_phi(int i, int j){
-	double newPHI;
-	
-	// NEED TO FIND A FUNCTION FOR A THAT IS ACTUALLY TRUE
-	newPHI = phi(i,j) + (dt_bar / pow(iA(i,j, 1), 2)) * (
-			(1 / dx_bar) * ( JR(i,j) - JL(i,j) + JT(i,j) - JB(i,j) )
-			- g_Prime(i,j) - lambda_bar * const_U * P_prime(i,j) );
-			
-	
-	return newPHI;
-}
 
 
 

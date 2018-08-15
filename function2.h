@@ -31,6 +31,8 @@ double jMag2(int i, int j, int sign);
 double iA(int i, int j, int sign);
 double jA(int i, int j, int sign);
 
+double A(int i, int j);
+
 double iA_prime(int i, int j, int sign);
 double jA_prime(int i, int j, int sign);
 

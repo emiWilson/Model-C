@@ -19,6 +19,8 @@ extern double * begining_Of_U;
 
 extern double dx_bar;
 
+extern int edges[2];
+
  /****************************** FUNCTIONS **************************************************/
 
 //clear old data from output file
@@ -40,9 +42,13 @@ double dPHI(int i, int j);
 double U(int i, int j);
 
 //implements fixed flux boundary conditions for the thermal field U
-double BC_U(int i, int j);
+void BC_U(int i, int j);
 
-double BC_phi(int i, int j);
+void BC_phi(int i, int j);
+
+void checkPHI();
+
+void changeVal(int i, int j);
 
 void printPHI();
 

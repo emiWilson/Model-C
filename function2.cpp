@@ -116,12 +116,16 @@ double iA(int i, int j, int sign){
 	
 }
 
+
 double jA(int i, int j, int sign){
 
 	double A = (pow(jDERX(i, j, sign), 4) + pow(jDERY(i,j, sign), 2 ) ) / jMag2(i, j, sign);
 
 	return ( a_s * (1 + epsilon_prime * A ));
 
+}
+double A(int i, int j){
+	return ( 1 / 4 )*( iA(i, j, 1) + iA (i, j, -1) + jA(i,j,1) + jA(i,j, - 1) );
 }
 
 double iA_prime(int i, int j, int sign){
@@ -135,7 +139,7 @@ double jA_prime(int i, int j, int sign){
 }
 //----------------------------------------------JR,JL, JT, JB FUNCTIONS -----------------------------
 double JR(int i, int j){
-
+	
 	return iA(i, j, 1) * ( iA(i,j, 1) * iDERX(i,j, 1) - iA_prime(i,j, 1) * iDERY(i,j, 1) );
 	
 }

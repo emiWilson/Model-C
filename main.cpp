@@ -9,7 +9,7 @@
 #include <random>
 #include <cstdlib>
 #include <chrono> //time of execution of program, want to scale with system size t^(1/2)
- //PROBLEM MAY BE IN INDEXING.
+
 
 
 using namespace std;
@@ -22,8 +22,7 @@ int main(){
 
 	wipeOutput(); //ensure all old data is deleted from file.
 
-	int edges[2] = {0, N};
-
+	int edges[2] = {0, N + 1};
 
 	//start stopwatch
 	//auto start = std::chrono::high_resolution_clock::now();
@@ -47,41 +46,56 @@ int main(){
 	std::default_random_engine de(time(0));
   	std::normal_distribution<double> distribution(0, 0.001); // 0 mean and 0.001 standard deviation
 
-  	for (int i = 0; i < N ; i ++){
-		for (int j = 0; j < N; j ++){
+  	for (int i = 1; i < N + 1 ; i ++){
+		for (int j = 1; j < N + 1; j ++){
 			
 			phi[i][j] = distribution(de);
+
+			//cout << i << " " << j << " " << phi[i][j] << " but  " << phi[2][1] << endl;
+			
 	
 		}
+		
 	}
-	
+	cout << endl << endl;
 
 	printPHI();
 
 
 	for(int timestep = 0; timestep < T; timestep++){
 
+		//update edge nodes for boundary conditions
 		for (int i : edges){
-			for (int j = 0; j < N + 1; j ++){
-				U[i][j] = BC_U(i,j);
-				phi[i][j] = BC_phi(i,j);
-			}
-		}
+			for (int j = 1; j < N + 1; j ++){
+				//U[i][j] = BC_U(i,j);
+				//phi[i][j] = BC_phi(i,j);
 
-		for (int j : edges){
-			for (int i = 0; i < N + 1; i ++){
-				U[i][j] = BC_U(i,j);
-				phi[i][j] = BC_phi(i,j);
-			}
+				//cout << i << " " << j << " " << phi[i][j] <<  " but " << phi[2][1] << endl << endl;
+			} 
 		}
 		
-		for (int i = 0; i < N; i ++){
+
+		for (int j : edges){
+			for (int i = 1; i < N + 1 ; i ++){
+				//U[i][j] = BC_U(i,j);
+				//phi[i][j] = BC_phi(i,j);
+
+				//cout << i << " " << j << " " << phi[i][j] <<  " but " << phi[2][1] << endl << endl;
+			}
+		}
+		//cout << phi[0][4] << endl;
+		//checkPHI();
+		
+		for (int i = 1; i < N; i ++){
 			for (int j = 0; j < N ; j ++){
+			
 				newPHI = timeMarchC_phi(i,j);
 				dPhi[i][j] = (newPHI - phi[i][j]);
 				phi[i][j] = newPHI;
 			}
+			
 		}
+	
 
 		for (int i = 0; i < N; i ++){
 			for (int j = 0; j < N; j ++){
