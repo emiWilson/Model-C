@@ -44,69 +44,49 @@ void writeConstantsToFile(int N, int T, int p, double dt, double dx){
 	myfile << N << " " << T << " " << p << " " << dt << " " << dx;
 	myfile.close();
 }
-int size(){
 
-	return N + 1;
-
-}
 
 void fillPHI(){
 
 	std::default_random_engine de(time(0));
   	std::normal_distribution<double> distribution(0, 0.001); // 0 mean and 0.001 standard deviation
 
-  	for (int i = 0; i < N + 3; i ++){
-		for (int j = 0; j < N + 3; j ++){
+  	for (int i = 0; i < N; i ++){
+		for (int j = 0; j < N; j ++){
 			
-			 * (begining_Of_PHI + (i * (N + 2)) + j) =  i*j;//distribution(de);
+			 * (begining_Of_PHI + (i * N) + j) = distribution(de);
+
+			 * (begining_Of_U + (i * N) + j) = i * j;//distribution(de) / 10;
 			 
 		}
 		
 	}
 }
 
-
-//enforces periodic boundary conditions for the discreet laplacian
-
-int BC(int i){
-	
-	int I = (i + N) % N;
-
-	if (I > N - 1)
-		cout << "ERROR!!";
-
-	if (I < 0)
-		cout << "ERROR!!";
-
-	return I;
-
-}
-
-
 //gets values in the phi array
 double phi(int i, int j){
+	int I = BC(i);
+	int J = BC(j);
 
-	double element = * (begining_Of_PHI + (i * (N + 2)) + j);
+	double element = * (begining_Of_PHI + (I * N) + J);
 	
 	return element;
 
 }
-
+/*
 void changeVal(int i, int j, double val){
 
 	* (begining_Of_PHI + (i * N) + j) = val;
-
-	cout << i << " " << j << endl;
 
 
 }
 
 void changeU(int i, int j, double val){
 
-	* (begining_Of_U + (i * (N + 2)) + j) = val;
+	* (begining_Of_U + (i * (N)) + j) = val;
 
 }
-
+*/
 
 double dPHI(int i, int j){
 	double element = * (ptr_dPHI + (i * N ) + j);
@@ -116,96 +96,83 @@ double dPHI(int i, int j){
 //gets values in the phi array
 double U(int i, int j){
 
-	double element = * (begining_Of_U + (i * N) + j);
+	int edgeFACT = BC_U(i, j);
+
+	double element = * (begining_Of_U + (BC(i) * N) + BC(j)) + edgeFACT * q * dx;
+	
 	
 	return element;
 
 }
 
 //implements fixed flux boundary conditions for the thermal field U
-void BC_U(int i, int j){
+int BC_U(int i, int j){
 
-	double updateVal = U(i,j);
+	double isEdge = 0; //isedge is false when 0
 
-	if (i == 0){
-		updateVal = U(1, j) - q * dx; 
+	if (i == -1){
+		isEdge = - 1;
 	}
 
-	else if (i == N + 1){
-		updateVal = U(N, j) + q * dx;
+	else if (i == N){
+		isEdge = + 1;
 	}
 
-	else if (j == 0){
-		updateVal = U(i, 1) - q * dx;
+	else if (j == -1){
+		isEdge = - 1;
 	}
 
-	else if (j == N + 1){
-		updateVal = U(i, N) + q * dx;
+	else if (j == N){
+		isEdge = + 1;
 	}
+
+	return isEdge;
 	
 }
 
-void BC_phi(int i, int j){
-
-	double updateVal;
-
-
-	if (i == 0){
-		updateVal = phi(1, j);
-
-	}
-	else if (i == N + 2){
-		updateVal = phi(N + 1, j);
-	}
-
-	else if (j == 0){
-		updateVal = phi(i, 1);
-	}
-
-	else if (j == N + 2){
-		updateVal = phi(i, N + 1);
-	}
+int BC(int i){
+	int I = i;
 	
-	changeVal(i, j, updateVal);
+	if(i == -1){
+		I = 0;
+
+	}
+	if(i == N){
+		I = N - 1;
+	}
+
+	return I;
 	
 
 }
-
-void treatBCs(){
-	//update edge nodes for boundary conditions
-		for (int i : edges){
-			for (int j = 1; j < N + 1; j++){
-				//BC_U(i,j);
-				BC_phi(i,j);
-		
-			} 
-		}
-		
-
-		for (int j : edges){
-			for (int i = 0; i < N + 1; i ++){
-				//BC_U(i,j);
-				BC_phi(i,j);
-
-			}
-		}
-}
-
 
 //be careful not to print this array every time step. it will quickly fill up disk space
+//printing with boundary conditons
 void printPHI(){
 
   	myfile.open ("output.txt", std::fstream::app);
-	for (int i = 0; i < N + 2; i ++){
-		for (int j = 0; j < N + 2; j ++){
+  	myfile << "phi Array" << endl;
+	for (int i = -1; i < N + 1; i ++){
+		for (int j = -1; j < N + 1; j ++){
 
-			myfile << phi(i,j) << " ";
+			//myfile << phi(i,j) << " ";
+
+		}
+		//myfile << endl;
+	}
+
+	//myfile << endl;
+
+	cout << q * dx;
+	myfile << "U array" << endl;
+	for (int i = -1; i < N + 1; i ++){
+		for (int j = -1; j < N + 1; j ++){
+
+			myfile << U(i,j) << " ";
 
 		}
 		myfile << endl;
 	}
-
-	myfile << endl;
 
 	myfile.close();
 

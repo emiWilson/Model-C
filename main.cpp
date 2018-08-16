@@ -27,7 +27,7 @@ int main(){
 	//auto start = std::chrono::high_resolution_clock::now();
 
 
-	double phi[N + 2][N + 2];	
+	double phi[N][N];	
 
 	begining_Of_PHI = & phi[0][0]; //point ptrPHI to start of 2D phi array
 	
@@ -46,14 +46,10 @@ int main(){
 
 	printPHI();
 
-	treatBCs();
 
-	printPHI();
 
-/*
 	for(int timestep = 0; timestep < T; timestep++){
 
-		treatBCs();
 
 		
 		for (int i = 1; i < N; i ++){
@@ -79,7 +75,7 @@ int main(){
 		}
 
 	} 
-*/
+
 
 	//stop stopwatch
 	//auto finish = std::chrono::high_resolution_clock::now();

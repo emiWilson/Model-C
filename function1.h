@@ -43,13 +43,9 @@ double dPHI(int i, int j);
 double U(int i, int j);
 
 //implements fixed flux boundary conditions for the thermal field U
-void BC_U(int i, int j);
+int BC_U(int i, int j);
 
-void BC_phi(int i, int j);
 
-void treatBCs();
-
-int size();
 
 void checkPHI();
 
