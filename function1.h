@@ -21,6 +21,7 @@ extern double dx_bar;
 
 extern int edges[2];
 
+
  /****************************** FUNCTIONS **************************************************/
 
 //clear old data from output file
@@ -29,9 +30,9 @@ void wipeOutput();
 
 void writeConstantsToFile(int N, int T, int p, double dt, double dx);
 
-//periodic boundary conditions for the discreet laplacian
+void fillPHI();
 
-static int BC(int i);
+int BC(int i);
 
 //gets values in the phi array
 double phi(int i, int j);
@@ -46,9 +47,14 @@ void BC_U(int i, int j);
 
 void BC_phi(int i, int j);
 
+void treatBCs();
+
+int size();
+
 void checkPHI();
 
-void changeVal(int i, int j);
+void changeVal(int i, int j, double val);
+void changeU(int i, int j, int val);
 
 void printPHI();
 

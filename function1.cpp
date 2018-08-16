@@ -29,6 +29,8 @@ double dx = 0.8;
 
 double q = 1;
 
+int edges[2] = {0, N + 2};
+
 
 void wipeOutput(){
 	myfile.open("output.txt", std::ofstream::out | std::ofstream::trunc);
@@ -41,6 +43,26 @@ void writeConstantsToFile(int N, int T, int p, double dt, double dx){
 	myfile.open ("output.txt", std::fstream::app);
 	myfile << N << " " << T << " " << p << " " << dt << " " << dx;
 	myfile.close();
+}
+int size(){
+
+	return N + 1;
+
+}
+
+void fillPHI(){
+
+	std::default_random_engine de(time(0));
+  	std::normal_distribution<double> distribution(0, 0.001); // 0 mean and 0.001 standard deviation
+
+  	for (int i = 0; i < N + 3; i ++){
+		for (int j = 0; j < N + 3; j ++){
+			
+			 * (begining_Of_PHI + (i * (N + 2)) + j) =  i*j;//distribution(de);
+			 
+		}
+		
+	}
 }
 
 
@@ -64,7 +86,7 @@ int BC(int i){
 //gets values in the phi array
 double phi(int i, int j){
 
-	double element = * (begining_Of_PHI + (i * N + 1) + j);
+	double element = * (begining_Of_PHI + (i * (N + 2)) + j);
 	
 	return element;
 
@@ -72,20 +94,29 @@ double phi(int i, int j){
 
 void changeVal(int i, int j, double val){
 
-	* (begining_Of_PHI + (i * N + 1) + j) = val;
+	* (begining_Of_PHI + (i * N) + j) = val;
+
+	cout << i << " " << j << endl;
+
+
+}
+
+void changeU(int i, int j, double val){
+
+	* (begining_Of_U + (i * (N + 2)) + j) = val;
 
 }
 
 
 double dPHI(int i, int j){
-	double element = * (ptr_dPHI + (BC(i) * N + 1) + BC(j));
+	double element = * (ptr_dPHI + (i * N ) + j);
 	return element;
 }
 
 //gets values in the phi array
 double U(int i, int j){
 
-	double element = * (begining_Of_U + (BC(i) * N + 1) + BC(j));
+	double element = * (begining_Of_U + (i * N) + j);
 	
 	return element;
 
@@ -100,67 +131,76 @@ void BC_U(int i, int j){
 		updateVal = U(1, j) - q * dx; 
 	}
 
-	else if (i == N){
-		updateVal = U(N - 1, j) + q * dx;
+	else if (i == N + 1){
+		updateVal = U(N, j) + q * dx;
 	}
 
 	else if (j == 0){
 		updateVal = U(i, 1) - q * dx;
 	}
 
-	else if (j == N){
-		updateVal = U(i, N - 1) - q * dx;
+	else if (j == N + 1){
+		updateVal = U(i, N) + q * dx;
 	}
-
-	
 	
 }
 
 void BC_phi(int i, int j){
 
-	double updateVal = phi(i,j);
-	cout << "PHI IS 2, 1 " << phi(2,1) << endl;
+	double updateVal;
+
 
 	if (i == 0){
 		updateVal = phi(1, j);
 
 	}
-	else if (i == N + 1){
-		updateVal = phi(N - 1, j);
+	else if (i == N + 2){
+		updateVal = phi(N + 1, j);
 	}
 
 	else if (j == 0){
 		updateVal = phi(i, 1);
-
-		cout << "in j == 0 " << endl;
 	}
 
-	else if (j == N + 1){
-		updateVal = phi(i, N - 1);
+	else if (j == N + 2){
+		updateVal = phi(i, N + 1);
 	}
-	cout << i << " " << j << " " << updateVal << " but " << phi(2,1) << endl;
 	
 	changeVal(i, j, updateVal);
 	
-}
-
-void checkPHI(){
-
-	cout << phi(1,1) << " " << phi(1, 2) << " " << phi(1,3) << " " << phi(1,4) << endl;
-	cout << phi(2,1) << " " << phi(2, 2) << " " << phi(2,3) << " " << phi(2,4) << endl;
-	cout << phi(3,1) << " " << phi(3, 2) << " " << phi(3,3) << " " << phi(3,4) << endl;
-	cout << phi(4,1) << " " << phi(4, 2) << " " << phi(4,3) << " " << phi(4,4) << endl;
 
 }
+
+void treatBCs(){
+	//update edge nodes for boundary conditions
+		for (int i : edges){
+			for (int j = 1; j < N + 1; j++){
+				//BC_U(i,j);
+				BC_phi(i,j);
+		
+			} 
+		}
+		
+
+		for (int j : edges){
+			for (int i = 0; i < N + 1; i ++){
+				//BC_U(i,j);
+				BC_phi(i,j);
+
+			}
+		}
+}
+
 
 //be careful not to print this array every time step. it will quickly fill up disk space
 void printPHI(){
 
   	myfile.open ("output.txt", std::fstream::app);
+	for (int i = 0; i < N + 2; i ++){
+		for (int j = 0; j < N + 2; j ++){
 
-	for (int i = 0; i < N; i ++){
-		for (int j = 0; j < N; j ++){
 			myfile << phi(i,j) << " ";
+
 		}
 		myfile << endl;
 	}
@@ -170,3 +210,9 @@ void printPHI(){
 	myfile.close();
 
 }
+
+
+
+
+
+

@@ -22,13 +22,12 @@ int main(){
 
 	wipeOutput(); //ensure all old data is deleted from file.
 
-	int edges[2] = {0, N + 1};
 
 	//start stopwatch
 	//auto start = std::chrono::high_resolution_clock::now();
 
 
-	double phi[N + 1][N + 1];	
+	double phi[N + 2][N + 2];	
 
 	begining_Of_PHI = & phi[0][0]; //point ptrPHI to start of 2D phi array
 	
@@ -43,48 +42,19 @@ int main(){
 	ptr_dPHI = &dPhi[0][0];
 
 
-	std::default_random_engine de(time(0));
-  	std::normal_distribution<double> distribution(0, 0.001); // 0 mean and 0.001 standard deviation
-
-  	for (int i = 1; i < N + 1 ; i ++){
-		for (int j = 1; j < N + 1; j ++){
-			
-			phi[i][j] = distribution(de);
-
-			//cout << i << " " << j << " " << phi[i][j] << " but  " << phi[2][1] << endl;
-			
-	
-		}
-		
-	}
-	cout << endl << endl;
+	fillPHI();
 
 	printPHI();
 
+	treatBCs();
 
+	printPHI();
+
+/*
 	for(int timestep = 0; timestep < T; timestep++){
 
-		//update edge nodes for boundary conditions
-		for (int i : edges){
-			for (int j = 1; j < N + 1; j ++){
-				//U[i][j] = BC_U(i,j);
-				//phi[i][j] = BC_phi(i,j);
+		treatBCs();
 
-				//cout << i << " " << j << " " << phi[i][j] <<  " but " << phi[2][1] << endl << endl;
-			} 
-		}
-		
-
-		for (int j : edges){
-			for (int i = 1; i < N + 1 ; i ++){
-				//U[i][j] = BC_U(i,j);
-				//phi[i][j] = BC_phi(i,j);
-
-				//cout << i << " " << j << " " << phi[i][j] <<  " but " << phi[2][1] << endl << endl;
-			}
-		}
-		//cout << phi[0][4] << endl;
-		//checkPHI();
 		
 		for (int i = 1; i < N; i ++){
 			for (int j = 0; j < N ; j ++){
@@ -109,6 +79,7 @@ int main(){
 		}
 
 	} 
+*/
 
 	//stop stopwatch
 	//auto finish = std::chrono::high_resolution_clock::now();
