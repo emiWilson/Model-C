@@ -8,7 +8,6 @@ extern int N, T, skipPrint; //number of physical and temporal iterations
 
 
 //ptrPHI will be used to navigate the NxN phi array: phi[i][j] = *(ptr + (i * N) + j))
-extern double * ptrPHI , * ptrU, *ptr_dPHI;
 
 extern double q; //imposed boundary flux condition used for Model C.
 extern double tao;
@@ -16,8 +15,11 @@ extern double tao;
 //this pointer will always point to the start of the PHI array and will remain unaltered. Can't make "const" variable type b/c don't know the phi array before the program starts. 
 extern double * begining_Of_PHI;
 extern double * begining_Of_U;
+extern double * ptr_dPHI;
 
 extern double dx_bar;
+extern double dt_bar;
+extern double W_phi;
 
 extern int edges[2];
 
@@ -53,5 +55,6 @@ void changeVal(int i, int j, double val);
 void changeU(int i, int j, int val);
 
 void printPHI();
+void printU();
 
 #endif

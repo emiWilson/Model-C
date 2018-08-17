@@ -33,19 +33,18 @@ int main(){
 	
 
 	//have "ghost node" along edge of thermal field, U
-	double U[N + 1][N + 1];
+	double U[N][N];
 	begining_Of_U = &U[0][0];
 	
 
 	double newPHI;
-	double dPhi[N + 1][N + 1];
+	double dPhi[N][N];
 	ptr_dPHI = &dPhi[0][0];
 
 
 	fillPHI();
 
 	printPHI();
-
 
 
 	for(int timestep = 0; timestep < T; timestep++){
@@ -62,13 +61,25 @@ int main(){
 			
 		}
 	
+/*	for (int i = 0; i < N; i ++){
+		for (int j = 0; j < N; j ++){
 
+			cout << U[i][j] << " ";
+
+		}
+		cout << endl;
+	}
+	printU();
+*/
 		for (int i = 0; i < N; i ++){
 			for (int j = 0; j < N; j ++){
 				U[i][j] = timeMarchC_U(i,j);
+
 			}
 		}
 
+//		cout << endl << "-----------------------------------------------" << endl;
+	
 		//print phi array for every 10th timestep
 		if( timestep % skipPrint == 0 ){
 			printPHI();
@@ -81,7 +92,7 @@ int main(){
 	//auto finish = std::chrono::high_resolution_clock::now();
 
 	//should print parameters and other info to top of the output file.
-	writeConstantsToFile(N, T, skipPrint, dt, dx);
+	//writeConstantsToFile(N, T, skipPrint, dt, dx);
 
 	//auto microseconds = std::chrono::duration_cast<std::chrono::microseconds>(finish-start);
     //    std::cout << microseconds.count() << "µs\n";

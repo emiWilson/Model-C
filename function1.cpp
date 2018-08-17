@@ -1,8 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <math.h> /*pow*/
-#include <random>
-#include <cstdlib>
+
 
 
 using namespace std;
@@ -13,8 +12,8 @@ std::ofstream myfile;
 //clear old data from output file
 
 //assign vaue for N
-int N = 4;
-int T = 1; //make sure T is a multiple of 10 to make timesteps are good.
+int N = 40;
+int T = 200; //make sure T is a multiple of 10 to make timesteps are good.
 int skipPrint = 1;
 
 double * begining_Of_PHI;
@@ -24,12 +23,18 @@ double  * ptr_dPHI;
 //magnitude of timestep. should obey stability restriction delta_t <  (delta_x ^ 2) / 4
 //restriction means that it is not possible to advance a solution explicity faster than the inherent diffusion
 //time of the problem.
-double dt = 0.05; 
-double dx = 0.8;
+//double dt = 0.05; 
+//double dx = 0.8;
+
+double W_phi = 0.0000000001;
+double dt_bar =  0.014;
+double dx_bar =  0.4;
 
 double q = 1;
 
 int edges[2] = {0, N + 2};
+
+
 
 
 void wipeOutput(){
@@ -41,23 +46,21 @@ void wipeOutput(){
 void writeConstantsToFile(int N, int T, int p, double dt, double dx){
 	
 	myfile.open ("output.txt", std::fstream::app);
-	myfile << N << " " << T << " " << p << " " << dt << " " << dx;
+	//myfile << N << " " << T << " " << p << " " << dt << " " << dx;
 	myfile.close();
 }
 
 
 void fillPHI(){
 
-	std::default_random_engine de(time(0));
-  	std::normal_distribution<double> distribution(0, 0.001); // 0 mean and 0.001 standard deviation
+  	for (int i = 0; i < N ; i ++){
+		for (int j = 0; j < N ; j ++){
+			double Ro = 10 * W_phi;
+			double dist = pow((i-1) * dx_bar, 2) + pow((j-1) * dx_bar, 2) - pow(Ro,2);
+			cout << i << " " << j << endl;
+			 * (begining_Of_PHI + (i * N) + j) = - tanh(dist / sqrt(2));
 
-  	for (int i = 0; i < N; i ++){
-		for (int j = 0; j < N; j ++){
-			
-			 * (begining_Of_PHI + (i * N) + j) = distribution(de);
-
-			 * (begining_Of_U + (i * N) + j) = i * j;//distribution(de) / 10;
-			 
+			 * (begining_Of_U + (i * N) + j) = 0;
 		}
 		
 	}
@@ -73,32 +76,22 @@ double phi(int i, int j){
 	return element;
 
 }
-/*
-void changeVal(int i, int j, double val){
-
-	* (begining_Of_PHI + (i * N) + j) = val;
-
-
-}
-
-void changeU(int i, int j, double val){
-
-	* (begining_Of_U + (i * (N)) + j) = val;
-
-}
-*/
 
 double dPHI(int i, int j){
-	double element = * (ptr_dPHI + (i * N ) + j);
-	return element;
+	//cout << * (ptr_dPHI + (i * N ) + j) << endl;
+	return * (ptr_dPHI + (i * N ) + j);
+
+	
 }
 
 //gets values in the phi array
 double U(int i, int j){
 
-	int edgeFACT = BC_U(i, j);
+	//int edgeFACT = BC_U(i, j);
+	int I = BC(i);
+	int J = BC(j);
 
-	double element = * (begining_Of_U + (BC(i) * N) + BC(j)) + edgeFACT * q * dx;
+	double element = * (begining_Of_U + (I * N) + J); //+ ( edgeFACT * q * dx_bar);
 	
 	
 	return element;
@@ -114,7 +107,7 @@ int BC_U(int i, int j){
 		isEdge = - 1;
 	}
 
-	else if (i == N){
+	else if (i == N + 1){
 		isEdge = + 1;
 	}
 
@@ -122,7 +115,7 @@ int BC_U(int i, int j){
 		isEdge = - 1;
 	}
 
-	else if (j == N){
+	else if (j == N + 1){
 		isEdge = + 1;
 	}
 
@@ -151,31 +144,42 @@ int BC(int i){
 void printPHI(){
 
   	myfile.open ("output.txt", std::fstream::app);
-  	myfile << "phi Array" << endl;
-	for (int i = -1; i < N + 1; i ++){
-		for (int j = -1; j < N + 1; j ++){
+	for (int i = 0; i < N ; i ++){
+		for (int j = 0; j < N ; j ++){
 
-			//myfile << phi(i,j) << " ";
+			myfile << phi(i,j) << " ";
 
 		}
-		//myfile << endl;
+		myfile << endl;
 	}
 
-	//myfile << endl;
+	myfile << endl;
 
-	cout << q * dx;
+	/*
 	myfile << "U array" << endl;
-	for (int i = -1; i < N + 1; i ++){
-		for (int j = -1; j < N + 1; j ++){
+	for (int i = 0; i < N; i ++){
+		for (int j = 0; j < N; j ++){
 
 			myfile << U(i,j) << " ";
 
 		}
 		myfile << endl;
 	}
-
+*/
 	myfile.close();
 
+}
+
+void printU(){
+	cout << endl;
+	for (int i = 0; i < N; i ++){
+		for (int j = 0; j < N; j ++){
+
+			cout << U(i,j) << " ";
+
+		}
+		cout << endl;
+	}
 }
 
 

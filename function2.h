@@ -3,13 +3,6 @@
 
 extern double  const_U, D_bar, a_s, epsilon_prime, a12, epsilon_4, lambda_bar; //Model C variables
 
-extern double Der;
-
-extern double dx, dy, dt;
-
-extern double dx_bar, dt_bar;
-
-extern double W, M;
 
 /*
 checks if (i,j) is an edge node.
@@ -19,27 +12,26 @@ int isEdge(int i, int j);
 /*
 computes the x derivative of phi 
 */
-double iDERX(int i, int j, int sign);
-double jDERX(int i, int j, int sign);
+double pp(int i, int j);
+double pm(int i, int j);
+double mp(int i, int j);
+double mm(int i, int j);
 
-double iDERY(int i, int j, int sign);
-double jDERY(int i, int j, int sign);
+double DERX(int i, int j);
+double DERY(int i, int j);
 
-double iMag2(int i, int j, int sign);
-double jMag2(int i, int j, int sign);
+void getAnisropies(double derx, double dery);
 
-double iA(int i, int j, int sign);
-double jA(int i, int j, int sign);
+double Mag2(double i, double j);
 
-double A(int i, int j);
-
-double iA_prime(int i, int j, int sign);
-double jA_prime(int i, int j, int sign);
+double A(double i, double j);
+double A_prime(double i, double j);
 
 double JR(int i, int j);
 double JL(int i, int j);
 double JT(int i, int j);
 double JB(int i, int j);
+
 
 
 #endif
