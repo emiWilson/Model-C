@@ -30,7 +30,7 @@ extern int edges[2];
 void wipeOutput();
 
 
-void writeConstantsToFile(int N, int T, int p, double dt, double dx);
+void writeConstantsToFile();
 
 void fillPHI();
 

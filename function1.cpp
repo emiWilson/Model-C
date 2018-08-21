@@ -12,9 +12,9 @@ std::ofstream myfile;
 //clear old data from output file
 
 //assign vaue for N
-int N = 40;
-int T = 200; //make sure T is a multiple of 10 to make timesteps are good.
-int skipPrint = 1;
+int N = 200;
+int T = 400; //make sure T is a multiple of 10 to make timesteps are good.
+int skipPrint = 50;
 
 double * begining_Of_PHI;
 double * begining_Of_U;
@@ -43,10 +43,10 @@ void wipeOutput(){
 
 }
 
-void writeConstantsToFile(int N, int T, int p, double dt, double dx){
+void writeConstantsToFile(){
 	
 	myfile.open ("output.txt", std::fstream::app);
-	//myfile << N << " " << T << " " << p << " " << dt << " " << dx;
+	myfile << N << " " << T << " " << skipPrint << " " << dt_bar << " " << dx_bar;
 	myfile.close();
 }
 
@@ -55,9 +55,11 @@ void fillPHI(){
 
   	for (int i = 0; i < N ; i ++){
 		for (int j = 0; j < N ; j ++){
-			double Ro = 10 * W_phi;
-			double dist = pow((i-1) * dx_bar, 2) + pow((j-1) * dx_bar, 2) - pow(Ro,2);
-			cout << i << " " << j << endl;
+
+			double Ro = 10;// * W_phi;
+			double dist = pow((i-1) * dx_bar, 2) + pow((j-1) * dx_bar, 2) - Ro * dx_bar;
+			
+
 			 * (begining_Of_PHI + (i * N) + j) = - tanh(dist / sqrt(2));
 
 			 * (begining_Of_U + (i * N) + j) = 0;
@@ -79,7 +81,10 @@ double phi(int i, int j){
 
 double dPHI(int i, int j){
 	//cout << * (ptr_dPHI + (i * N ) + j) << endl;
-	return * (ptr_dPHI + (i * N ) + j);
+	int I = BC(i);
+	int J = BC(j);
+
+	return * (ptr_dPHI + (I * N ) + J);
 
 	
 }
@@ -87,11 +92,11 @@ double dPHI(int i, int j){
 //gets values in the phi array
 double U(int i, int j){
 
-	//int edgeFACT = BC_U(i, j);
+	int edgeFACT = BC_U(i, j);
 	int I = BC(i);
 	int J = BC(j);
 
-	double element = * (begining_Of_U + (I * N) + J); //+ ( edgeFACT * q * dx_bar);
+	double element = * (begining_Of_U + (I * N) + J) + ( edgeFACT * q * dx_bar);
 	
 	
 	return element;

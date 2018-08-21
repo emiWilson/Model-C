@@ -17,7 +17,6 @@ double a12 = 4  * a_s * epsilon_prime;
 
 double tao = 3 * 0.00000000000001; //3 * 10 ^ -13
 
-double a, a_prime, mag_2;
 
 
 double pp(int i, int j){
@@ -57,38 +56,46 @@ double Mag2(double derx, double dery){
 //----------------------------------------------A, A_prime FUNCTIONS -----------------------------
 
 double A(double derx, double dery){
-	double A = (pow(derx, 4) + pow(dery, 2 ) ) / Mag2(derx, dery);
+	double mag_2 = Mag2(derx, dery);
+	double A;
 
-	return ( a_s * (1 + epsilon_prime * A ));
+	if(mag_2 < pow(10, -8)){
+
+		return a_s;
+
+	}else{
+		A = (pow(derx, 4) + pow(dery, 4 ) ) / Mag2(derx, dery);
+
+		return ( a_s * (1 + epsilon_prime * A ));
+	}
 }
 
 double A_prime(double derx, double dery){
-	double A = (pow(derx, 2) + pow(dery, 2 ) ) / Mag2(derx, dery);
-	return -a12 * derx * dery * A;
-}
-//----------------------------------------------JR,JL, JT, JB FUNCTIONS -----------------------------
-void getAnisropies(double derx, double dery){
-	
-	mag_2 = Mag2(derx, dery);
 
-	if (mag_2 < pow(10, -8)){
-		a = a_s;
-		a_prime = 0;
+	double mag_2 = Mag2(derx, dery);
+
+	double A;
+
+	if(mag_2 < pow(10, -8)){
+		
+		return 0;
 
 	}else{
-		a = A(derx, dery);
-		a_prime = A_prime(derx, dery);
+		A = (pow(derx, 2) - pow(dery, 2 ) ) / Mag2(derx, dery);
+		return -a12 * derx * dery * A;
 	}
-
-
 }
+//----------------------------------------------JR,JL, JT, JB FUNCTIONS -----------------------------
 
 //right edge flux
 double JR(int i, int j){
 	double derx = phi(i + 1, j) - phi(i,j);
 	double dery = pp(i,j) - pm(i,j);
 
-	getAnisropies(derx,dery);
+	double a, a_prime;
+
+	a = A(derx, dery);
+	a_prime = A_prime(derx,dery);
 
 	return a * ( a * derx + a_prime * dery );
 	
@@ -98,10 +105,12 @@ double JR(int i, int j){
 double JL(int i, int j){
 	double derx = phi(i, j) - phi(i - 1,j);
 	double dery = mp(i,j) - mm(i,j);
-	
-	getAnisropies(derx, dery);
-	
 
+	double a, a_prime;
+	
+	a = A(derx, dery);
+	a_prime = A_prime(derx,dery);
+	
 	return a * ( a * derx + a_prime * dery );
 }
 
@@ -110,7 +119,10 @@ double JT(int i, int j){
 	double derx = pp(i,j) - mp(i,j);
 	double dery = phi(i, j + 1) - phi(i,j);
 	
-	getAnisropies(derx,dery);
+	double a, a_prime;
+
+	a = A(derx, dery);
+	a_prime = A_prime(derx,dery);
 
 	return a * ( a * dery - a_prime * derx );
 }
@@ -119,8 +131,11 @@ double JT(int i, int j){
 double JB(int i, int j){
 	double derx = pm(i, j) - mm(i, j);
 	double dery = phi(i, j) - phi(i, j - 1);
+
+	double a, a_prime;
 	
-	getAnisropies(derx,dery);
+	a = A(derx, dery);
+	a_prime = A_prime(derx,dery);
 
 	return a * ( a * dery - a_prime * derx );
 }

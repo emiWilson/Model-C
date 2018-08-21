@@ -87,6 +87,8 @@ int main(){
 
 	} 
 
+	writeConstantsToFile();
+
 
 	//stop stopwatch
 	//auto finish = std::chrono::high_resolution_clock::now();
